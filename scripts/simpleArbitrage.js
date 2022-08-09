@@ -56,14 +56,14 @@ async function main() {
       let amountOut = ethers.utils.formatUnits(amountOut1[1], decimals);
       amountOut = parseFloat(amountOut).toFixed(8);
 
-      console.log("quick amountOut1", ethers.utils.formatUnits(amountOut1[1], decimals));
+      // console.log("quick amountOut1", ethers.utils.formatUnits(amountOut1[1], decimals));
 
       firstDex = "quick";
       secondDex = "quick";
       minAmount = amountOut;
       maxAmount = amountOut;
     } catch (error) {
-      console.log("No hay ese par en quickswap");
+      // console.log("No hay ese par en quickswap");
     }
 
     try {
@@ -84,9 +84,9 @@ async function main() {
         secondDex = "sushi";
       }
 
-      console.log("sushi amountOut2", ethers.utils.formatUnits(amountOut2[1], decimals));
+      // console.log("sushi amountOut2", ethers.utils.formatUnits(amountOut2[1], decimals));
     } catch (error) {
-      console.log("No hay ese par en sushiswap");
+      // console.log("No hay ese par en sushiswap");
     }
 
     try {
@@ -109,9 +109,9 @@ async function main() {
         minAmount = amountOut;
         secondDex = "uni";
       }
-      console.log("uni   amountOut3", ethers.utils.formatUnits(amountOut3, decimals));
+      // console.log("uni   amountOut3", ethers.utils.formatUnits(amountOut3, decimals));
     } catch (error) {
-      console.log("No hay ese par en uniswap");
+      // console.log("No hay ese par en uniswap");
     }
 
     try {
@@ -132,9 +132,9 @@ async function main() {
         secondDex = "ape";
       }
 
-      console.log("ape amountOut4", ethers.utils.formatUnits(amountOut4[1], decimals));
+      // console.log("ape amountOut4", ethers.utils.formatUnits(amountOut4[1], decimals));
     } catch (error) {
-      console.log("No hay ese par en apeswap");
+      // console.log("No hay ese par en apeswap");
     }
 
     try {
@@ -155,9 +155,9 @@ async function main() {
         secondDex = "dfyn";
       }
 
-      console.log("dfyn amountOut5", ethers.utils.formatUnits(amountOut5[1], decimals));
+      // console.log("dfyn amountOut5", ethers.utils.formatUnits(amountOut5[1], decimals));
     } catch (error) {
-      console.log("No hay ese par en dfyn");
+      // console.log("No hay ese par en dfyn");
     }
 
     console.log("FirstDex:", firstDex);
