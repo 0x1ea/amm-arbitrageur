@@ -85,7 +85,7 @@ contract Swampert {
         ISwapRouter secondDex,
         address[] memory path
     ) public payable onlyOwner {
-        firstDex.swapExactETHForTokens{value: msg.value / 2}(
+        firstDex.swapExactETHForTokens{value: msg.value}(
             0,
             path,
             address(this),
@@ -96,7 +96,7 @@ contract Swampert {
         amountOut = token.balanceOf(address(this));
         token.approve(address(secondDex), amountOut);
 
-        amountOut = secondDex.exactInputSingle(
+        secondDex.exactInputSingle(
             ISwapRouter.ExactInputSingleParams({
                 tokenIn: path[1],
                 tokenOut: path[0],
