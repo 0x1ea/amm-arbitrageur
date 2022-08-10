@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
-pragma solidity >=0.6.2;
+//SPDX-License-Identifier: MIT
+pragma solidity >=0.8.9;
 
-interface IUniswapV2Router01 {
+interface IUniswapV2Router02 {
     function factory() external pure returns (address);
 
     function WETH() external pure returns (address);
@@ -158,9 +158,7 @@ interface IUniswapV2Router01 {
         external
         view
         returns (uint[] memory amounts);
-}
 
-interface IUniswapV2Router02 is IUniswapV2Router01 {
     function removeLiquidityETHSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,

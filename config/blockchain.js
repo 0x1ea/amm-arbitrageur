@@ -4,7 +4,7 @@ const config = require("./config.json");
 
 const CHAIN = "polygon";
 const MY_ACCOUNT = config.keys.fake;
-const HTTP_URL = config.rpcUrl[CHAIN].public;
+const HTTP_URL = config.rpcUrl[CHAIN].local;
 
 const BN = BigNumber;
 const provider = new ethers.providers.JsonRpcProvider(process.env[HTTP_URL]);

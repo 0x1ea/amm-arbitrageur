@@ -22,15 +22,15 @@ module.exports = {
   networks: {
     hardhat: {
       // If you want to do some forking, uncomment this
-      forking: {
-        url: PUBLIC_FORK_RPC_URL,
-        blockNumber: 15271200,
-      },
-      chainId: 31337,
-      // mining: {
-      //   auto: true,
-      //   interval: [1000, 2000],
+      // forking: {
+      //   url: PUBLIC_FORK_RPC_URL,
+      //   blockNumber: 15271200,
       // },
+      chainId: 31337,
+      mining: {
+        auto: true,
+        interval: [1000, 2000],
+      },
     },
     localhost: {
       chainId: 31337,
@@ -76,24 +76,18 @@ module.exports = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1000,
           },
         },
       },
       {
-        version: "0.8.7",
-      },
-      {
-        version: "0.4.19",
-      },
-      {
-        version: "0.6.6",
-      },
-      {
-        version: "0.6.12",
-      },
-      {
-        version: "0.8.10",
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
       },
     ],
   },
