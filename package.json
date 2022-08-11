@@ -26,7 +26,7 @@
   },
   "scripts": {
     "test": "yarn hardhat test",
-    "fork": "hardhat node --fork https://rpc.ankr.com/polygon --fork-block-number 31735035",
+    "fork": "hardhat node --fork https://rpc.ankr.com/polygon",
     "forkMainnet": "hardhat node --fork https://rpc.ankr.com/eth --fork-block-number 15271200"
   },
   "keywords": [],

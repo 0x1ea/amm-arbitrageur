@@ -1,6 +1,6 @@
 {
   "polygon": {
-    "uni3Router": {
+    "uni": {
       "address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
       "abi": [
         {
@@ -311,7 +311,7 @@
         }
       ]
     },
-    "sushiRouter": {
+    "sushi": {
       "address": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
       "abi": [
         {
@@ -684,7 +684,7 @@
         { "stateMutability": "payable", "type": "receive" }
       ]
     },
-    "quickRouter": {
+    "quick": {
       "address": "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
       "abi": [
         {

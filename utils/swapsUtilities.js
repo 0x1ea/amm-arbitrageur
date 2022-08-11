@@ -1,14 +1,15 @@
-const { deployer, ethers } = require("../config/blockchain");
+const { deployer, ethers, BN } = require("../config/blockchain");
 const dexes = require("../config/dexes.json");
 const aave = require("../config/aave.json");
 
 const WRAPPER_ABI = aave.polygon.iWeth.abi;
 
-async function getDiff(config, params, i) {
-  const exchanges = await getExchanges();
-  let firstDex, secondDex;
+async function getDiff(config, params, i, type) {
+  const exchanges = await getExchanges(type);
+  let myDeployer = deployer[type];
+  let firstDex, secondDex, thirdDex, minAmount, maxAmount, midAmount;
 
-  const { decimals, symbol } = await getTokenData(config.token1, deployer);
+  const { decimals, symbol } = await getTokenData(config.token1, myDeployer);
   console.log(`\nId: ${i}, Symbol: ${symbol}`);
 
   try {
@@ -20,14 +21,16 @@ async function getDiff(config, params, i) {
     let amountOut = ethers.utils.formatUnits(amountOut1[1], decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
-    console.log("quick amountOut1", ethers.utils.formatUnits(amountOut1[1], decimals));
+    console.log("quick amountOut1:", ethers.utils.formatUnits(amountOut1[1], decimals));
 
     firstDex = "quick";
     secondDex = "quick";
+    thirdDex = "quick";
     minAmount = amountOut;
     maxAmount = amountOut;
+    // midAmount = amountOut;
   } catch (error) {
-    console.log("No hay ese par en quickswap");
+    console.log("quick amountOut1: N/A");
   }
 
   try {
@@ -38,19 +41,23 @@ async function getDiff(config, params, i) {
     let amountOut = ethers.utils.formatUnits(amountOut2[1], decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
-    if (!maxAmount || amountOut > maxAmount) {
-      maxAmount = amountOut;
-      firstDex = "sushi";
-    }
-
     if (!minAmount || amountOut < minAmount) {
       minAmount = amountOut;
       secondDex = "sushi";
     }
 
-    console.log("sushi amountOut2", ethers.utils.formatUnits(amountOut2[1], decimals));
+    if (!maxAmount || amountOut > maxAmount) {
+      maxAmount = amountOut;
+      firstDex = "sushi";
+    }
+
+    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+      midAmount = amountOut;
+      thirdDex = "sushi";
+    }
+    console.log("sushi amountOut2:", ethers.utils.formatUnits(amountOut2[1], decimals));
   } catch (error) {
-    console.log("No hay ese par en sushiswap");
+    console.log("sushi amountOut2: N/A");
   }
 
   try {
@@ -64,18 +71,23 @@ async function getDiff(config, params, i) {
     let amountOut = ethers.utils.formatUnits(amountOut3, decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
+    if (!minAmount || amountOut < minAmount) {
+      minAmount = amountOut;
+      secondDex = "uni";
+    }
+
     if (!maxAmount || amountOut > maxAmount) {
       maxAmount = amountOut;
       firstDex = "uni";
     }
 
-    if (!minAmount || amountOut < minAmount) {
-      minAmount = amountOut;
-      secondDex = "uni";
+    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+      midAmount = amountOut;
+      thirdDex = "uni";
     }
-    console.log("uni   amountOut3", ethers.utils.formatUnits(amountOut3, decimals));
+    console.log("uni   amountOut3:", ethers.utils.formatUnits(amountOut3, decimals));
   } catch (error) {
-    console.log("No hay ese par en uniswap");
+    console.log("uni   amountOut3: N/A");
   }
 
   try {
@@ -86,19 +98,23 @@ async function getDiff(config, params, i) {
     let amountOut = ethers.utils.formatUnits(amountOut4[1], decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
-    if (!maxAmount || amountOut > maxAmount) {
-      maxAmount = amountOut;
-      firstDex = "ape";
-    }
-
     if (!minAmount || amountOut < minAmount) {
       minAmount = amountOut;
       secondDex = "ape";
     }
 
-    console.log("ape   amountOut4", ethers.utils.formatUnits(amountOut4[1], decimals));
+    if (!maxAmount || amountOut > maxAmount) {
+      maxAmount = amountOut;
+      firstDex = "ape";
+    }
+
+    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+      midAmount = amountOut;
+      thirdDex = "ape";
+    }
+    console.log("ape   amountOut4:", ethers.utils.formatUnits(amountOut4[1], decimals));
   } catch (error) {
-    console.log("No hay ese par en apeswap");
+    console.log("ape   amountOut4: N/A");
   }
 
   try {
@@ -109,34 +125,40 @@ async function getDiff(config, params, i) {
     let amountOut = ethers.utils.formatUnits(amountOut5[1], decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
-    if (!maxAmount || amountOut > maxAmount) {
-      maxAmount = amountOut;
-      firstDex = "dfyn";
-    }
-
     if (!minAmount || amountOut < minAmount) {
       minAmount = amountOut;
       secondDex = "dfyn";
     }
 
-    console.log("dfyn  amountOut5", ethers.utils.formatUnits(amountOut5[1], decimals));
+    if (!maxAmount || amountOut > maxAmount) {
+      maxAmount = amountOut;
+      firstDex = "dfyn";
+    }
+
+    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+      midAmount = amountOut;
+      thirdDex = "dfyn";
+    }
+    console.log("dfyn  amountOut5:", ethers.utils.formatUnits(amountOut5[1], decimals));
   } catch (error) {
-    console.log("No hay ese par en dfyn");
+    console.log("dfyn  amountOut5: N/A");
   }
 
-  console.log("FirstDex:", firstDex);
-  console.log("SecondDex:", secondDex);
+  console.log(
+    `FirstDex: ${firstDex} --> (SecondDex: ${secondDex} || ThirdDex: ${thirdDex})`
+  );
 
-  return { firstDex, secondDex };
+  return { firstDex, secondDex, thirdDex };
 }
 
-async function getExpectedOutput(firstDex, secondDex, config, params) {
+async function getExpectedOutput(firstDex, secondDex, config, params, type) {
   const amount = config.amount;
   const token0 = config.token0;
   const token1 = config.token1;
-  const exchanges = await getExchanges();
+  const exchanges = await getExchanges(type);
 
   let amountOut1, amountOut2, amountInDex, amountTemp, finalAmount;
+  let profitable = false;
 
   try {
     if (
@@ -158,6 +180,9 @@ async function getExpectedOutput(firstDex, secondDex, config, params) {
       amountInDex = ethers.utils.formatUnits(params.amountIn, 18);
       amountTemp = ethers.utils.formatUnits(amountOut2[0], 18);
       finalAmount = ethers.utils.formatUnits(amountOut2[1], 18);
+      if (amountOut2[1].gt(amount)) {
+        profitable = true;
+      }
     }
 
     if (
@@ -179,6 +204,9 @@ async function getExpectedOutput(firstDex, secondDex, config, params) {
       amountInDex = ethers.utils.formatUnits(amountOut1[0], 18);
       amountTemp = ethers.utils.formatUnits(amountOut2[0], 18);
       finalAmount = ethers.utils.formatUnits(amountOut2[1], 18);
+      if (amountOut2[1].gt(amount)) {
+        profitable = true;
+      }
     }
 
     if (
@@ -200,15 +228,22 @@ async function getExpectedOutput(firstDex, secondDex, config, params) {
       amountInDex = ethers.utils.formatUnits(amountOut1[0], 18);
       amountTemp = ethers.utils.formatUnits(amountOut1[1], 18);
       finalAmount = ethers.utils.formatUnits(amountOut2, 18);
+      if (amountOut2.gt(amount)) {
+        profitable = true;
+      }
     }
 
     console.log(
-      `${parseFloat(amountInDex).toFixed(8)} --${firstDex}--> ${parseFloat(
-        amountTemp
-      ).toFixed(8)} --${secondDex}--> ${parseFloat(finalAmount).toFixed(8)}`
+      `profitable: ${profitable} (${parseFloat(amountInDex).toFixed(
+        8
+      )} --${firstDex}--> ${parseFloat(amountTemp).toFixed(
+        8
+      )} --${secondDex}--> ${parseFloat(finalAmount).toFixed(8)})`
     );
+    return profitable;
   } catch (error) {
-    console.log("Error consiguiendo la ruta de swaps");
+    console.log("Error consiguiendo la ruta de swaps", error);
+    return profitable;
   }
 }
 
@@ -228,41 +263,41 @@ async function getTokenData(tokenAddress, deployer) {
   return { balance, symbol, decimals };
 }
 
-async function getExchanges() {
+async function getExchanges(type) {
   const sushi = new ethers.Contract(
-    dexes.polygon.sushiRouter.address,
-    dexes.polygon.sushiRouter.abi,
-    deployer
+    dexes.polygon.sushi.address,
+    dexes.polygon.sushi.abi,
+    deployer[type]
   );
 
   const quick = new ethers.Contract(
-    dexes.polygon.quickRouter.address,
-    dexes.polygon.quickRouter.abi,
-    deployer
+    dexes.polygon.quick.address,
+    dexes.polygon.quick.abi,
+    deployer[type]
   );
 
   const uni = new ethers.Contract(
-    dexes.polygon.uni3Router.address,
-    dexes.polygon.uni3Router.abi,
-    deployer
+    dexes.polygon.uni.address,
+    dexes.polygon.uni.abi,
+    deployer[type]
   );
 
   const uniQuoter = new ethers.Contract(
     dexes.polygon.uniQuoter.address,
     dexes.polygon.uniQuoter.abi,
-    deployer
+    deployer[type]
   );
 
   const dfyn = new ethers.Contract(
     dexes.polygon.dfyn.address,
     dexes.polygon.dfyn.abi,
-    deployer
+    deployer[type]
   );
 
   const ape = new ethers.Contract(
     dexes.polygon.ape.address,
     dexes.polygon.ape.abi,
-    deployer
+    deployer[type]
   );
 
   return { sushi, quick, uni, uniQuoter, dfyn, ape };

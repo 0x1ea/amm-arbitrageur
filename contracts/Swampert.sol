@@ -25,7 +25,7 @@ contract Swampert {
         IUniswapV2Router02 secondDex,
         address[] calldata path,
         address[] calldata inversePath
-    ) public payable onlyOwner {
+    ) public payable onlyOwner returns (uint) {
         firstDex.swapExactETHForTokens{value: msg.value}(
             0,
             path,
@@ -37,20 +37,24 @@ contract Swampert {
         amountOut = token.balanceOf(address(this));
         token.approve(address(secondDex), amountOut);
 
-        secondDex.swapExactTokensForETH(
+        uint[] memory outputAmount = secondDex.swapExactTokensForETH(
             amountOut,
             0,
             inversePath,
             msg.sender,
             block.timestamp
         );
+
+        require(outputAmount[1] > msg.value, "0");
+
+        return outputAmount[1];
     }
 
     function fromV3ToV2(
         ISwapRouter firstDex,
         IUniswapV2Router02 secondDex,
         address[] calldata inversePath
-    ) public payable onlyOwner {
+    ) public payable onlyOwner returns (uint) {
         IWeth token = IWeth(inversePath[1]);
         token.deposit{value: msg.value}();
         token.approve(address(firstDex), msg.value);
@@ -71,20 +75,24 @@ contract Swampert {
         IWeth token2 = IWeth(inversePath[0]);
         token2.approve(address(secondDex), amountOut);
 
-        secondDex.swapExactTokensForETH(
+        uint[] memory outputAmount = secondDex.swapExactTokensForETH(
             amountOut,
             0,
             inversePath,
             msg.sender,
             block.timestamp
         );
+
+        require(outputAmount[1] > msg.value, "0");
+
+        return outputAmount[1];
     }
 
     function fromV2ToV3(
         IUniswapV2Router02 firstDex,
         ISwapRouter secondDex,
         address[] memory path
-    ) public payable onlyOwner {
+    ) public payable onlyOwner returns (uint) {
         firstDex.swapExactETHForTokens{value: msg.value}(
             0,
             path,
@@ -96,7 +104,7 @@ contract Swampert {
         amountOut = token.balanceOf(address(this));
         token.approve(address(secondDex), amountOut);
 
-        secondDex.exactInputSingle(
+        uint outputAmount = secondDex.exactInputSingle(
             ISwapRouter.ExactInputSingleParams({
                 tokenIn: path[1],
                 tokenOut: path[0],
@@ -108,5 +116,9 @@ contract Swampert {
                 sqrtPriceLimitX96: 0
             })
         );
+
+        require(outputAmount > msg.value, "0");
+
+        return outputAmount;
     }
 }
