@@ -104,6 +104,10 @@ async function estimateSwapV3toV2(
     );
 
     const result = outputAmount.sub(transactionCost);
+
+    console.log("gasPrice:", gasPrice.toString());
+    console.log("outputAmount:", outputAmount.toString());
+    console.log("transactionCost:", transactionCost.toString());
     console.log("result:", result.toString());
     if (result.gt(inputAmount)) {
       return true;
@@ -161,6 +165,9 @@ async function estimateSwapV2toV2(
 
     const result = outputAmount.sub(transactionCost);
 
+    console.log("gasPrice:", gasPrice.toString());
+    console.log("outputAmount:", outputAmount.toString());
+    console.log("transactionCost:", transactionCost.toString());
     console.log("result:", result.toString());
     if (result.gt(inputAmount)) {
       return true;
@@ -198,6 +205,9 @@ async function estimateSwapV2toV3(inputAmount, firstDex, secondDex, path, myProv
     });
 
     const result = outputAmount.sub(transactionCost);
+    console.log("gasPrice:", gasPrice.toString());
+    console.log("outputAmount:", outputAmount.toString());
+    console.log("transactionCost:", transactionCost.toString());
     console.log("result:", result.toString());
     if (result.gt(inputAmount)) {
       return true;
