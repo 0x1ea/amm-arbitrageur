@@ -12,7 +12,7 @@ async function main() {
   try {
     for (let i = 0; i < tokens.length; i++) {
       const config = {
-        amount: ONE.mul(10),
+        amount: ONE.mul(13),
         token0: WMATIC_ADDRESS,
         token1: tokens[i],
       };

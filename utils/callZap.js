@@ -80,7 +80,7 @@ async function estimateSwapV3toV2(
 ) {
   try {
     let gasPrice = await myProvider.getGasPrice();
-    gasPrice = gasPrice.mul(110);
+    gasPrice = gasPrice.mul(105);
     gasPrice = gasPrice.div(100);
 
     const txGasCost = await swampert.estimateGas.fromV3ToV2(
@@ -138,7 +138,7 @@ async function estimateSwapV2toV2(
 ) {
   try {
     let gasPrice = await myProvider.getGasPrice();
-    gasPrice = gasPrice.mul(110);
+    gasPrice = gasPrice.mul(105);
     gasPrice = gasPrice.div(100);
 
     const txGasCost = await swampert.estimateGas.fromV2ToV2(
@@ -191,7 +191,7 @@ async function swapV2toV3(inputAmount, firstDex, secondDex, path) {
 async function estimateSwapV2toV3(inputAmount, firstDex, secondDex, path, myProvider) {
   try {
     let gasPrice = await myProvider.getGasPrice();
-    gasPrice = gasPrice.mul(110);
+    gasPrice = gasPrice.mul(105);
     gasPrice = gasPrice.div(100);
 
     const txGasCost = await swampert.estimateGas.fromV2ToV3(firstDex, secondDex, path, {
