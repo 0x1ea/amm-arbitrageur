@@ -1,4 +1,4 @@
-const { BN, deployer, provider, ethers } = require("../config/blockchain");
+const { BN } = require("../config/blockchain");
 const aave = require("../config/aave.json");
 const { tokens } = require("../data/tokens.js");
 const { getDiff, getExpectedOutput } = require("../utils/swapsUtilities");
@@ -8,27 +8,28 @@ async function main() {
   const TYPE = "public";
   const ONE = BN.from("1000000000000000000");
   const HALF = BN.from("500000000000000000");
-  const WMATIC_ADDRESS = aave.polygon.iWeth.address;
+  const WMATIC = aave.polygon.iWeth.address;
   try {
     for (let i = 0; i < tokens.length; i++) {
       const config = {
-        amount: ONE.mul(13),
+        amount: ONE.mul(12),
         token0: WMATIC_ADDRESS,
         token1: tokens[i],
       };
 
+      const path = [WMATIC, tokens[i]];
+      const AMOUNT = ONE.mul(12);
+
       const params = {
-        tokenIn: config.token0,
-        tokenOut: config.token1,
+        tokenIn: WMATIC,
+        tokenOut: tokens[i],
         fee: 3000,
-        recipient: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-        deadline: "99999999999999",
-        amountIn: config.amount,
+        amountIn: AMOUNT,
         amountOutMinimum: 0,
         sqrtPriceLimitX96: 0,
       };
 
-      const { firstDex, secondDex, thirdDex } = await getDiff(config, params, i, TYPE);
+      const { firstDex, secondDex, thirdDex } = await getDiff(AMOUNT, path, params, i, TYPE);
 
       let profitable;
       if (firstDex != secondDex) {
@@ -48,14 +49,7 @@ async function main() {
       if (firstDex != thirdDex) {
         profitable = await getExpectedOutput(firstDex, thirdDex, config, params, TYPE);
         if (profitable) {
-          await callZap(
-            firstDex,
-            thirdDex,
-            config.amount,
-            config.token0,
-            config.token1,
-            "private"
-          );
+          await callZap(firstDex, thirdDex, config.amount, config.token0, config.token1, "private");
         }
       }
 

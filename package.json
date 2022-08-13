@@ -25,9 +25,10 @@
     "typechain": "^8.1.0"
   },
   "scripts": {
-    "test": "yarn hardhat test",
+    "test": "hardhat test",
     "fork": "hardhat node --fork https://rpc.ankr.com/polygon",
-    "forkMainnet": "hardhat node --fork https://rpc.ankr.com/eth --fork-block-number 15271200"
+    "forkMainnet": "hardhat node --fork https://rpc.ankr.com/eth --fork-block-number 15271200",
+    "compile": "hardhat compile"
   },
   "keywords": [],
   "author": "Ardy <cryptoardy@gmail.com>",

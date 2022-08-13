@@ -8,8 +8,8 @@ async function callZap(firstDex, secondDex, amount, TOKEN0, TOKEN1, TYPE) {
   const myDeployer = deployer[TYPE];
   const myProvider = provider[TYPE];
   swampert = new ethers.Contract(
-    "0x93357fb24dff071936d6ba7Af3DC73A321Ec420c",
-    metadata.abi,
+    dexes.polygon.swampert.address,
+    dexes.polygon.swampert.abi,
     deployer[TYPE]
   );
   const path = [TOKEN0, TOKEN1];
@@ -63,45 +63,21 @@ async function callZap(firstDex, secondDex, amount, TOKEN0, TOKEN1, TYPE) {
   }
 }
 
-async function swapV3toV2(inputAmount, firstDex, secondDex, inversePath) {
-  await swampert.fromV3ToV2(firstDex, secondDex, inversePath, {
-    value: inputAmount,
-  });
-  const amountOut = await swampert.amountOut();
-  console.log("amountOut:", amountOut.toString());
-}
-
-async function estimateSwapV3toV2(
-  inputAmount,
-  firstDex,
-  secondDex,
-  inversePath,
-  myProvider
-) {
+async function estimateSwapV3toV2(inputAmount, firstDex, secondDex, inversePath, myProvider) {
   try {
     let gasPrice = await myProvider.getGasPrice();
     gasPrice = gasPrice.mul(105);
     gasPrice = gasPrice.div(100);
 
-    const txGasCost = await swampert.estimateGas.fromV3ToV2(
-      firstDex,
-      secondDex,
-      inversePath,
-      {
-        value: inputAmount,
-      }
-    );
+    const txGasCost = await swampert.estimateGas.fromV3ToV2(firstDex, secondDex, inversePath, {
+      value: inputAmount,
+    });
 
     const transactionCost = txGasCost.mul(gasPrice);
 
-    const outputAmount = await swampert.callStatic.fromV3ToV2(
-      firstDex,
-      secondDex,
-      inversePath,
-      {
-        value: inputAmount,
-      }
-    );
+    const outputAmount = await swampert.callStatic.fromV3ToV2(firstDex, secondDex, inversePath, {
+      value: inputAmount,
+    });
 
     const result = outputAmount.sub(transactionCost);
 
@@ -120,22 +96,7 @@ async function estimateSwapV3toV2(
   }
 }
 
-async function swapV2toV2(inputAmount, firstDex, secondDex, path, inversePath) {
-  await swampert.fromV2ToV2(firstDex, secondDex, path, inversePath, {
-    value: inputAmount,
-  });
-  const amountOut = await swampert.amountOut();
-  console.log("amountOut:", amountOut.toString());
-}
-
-async function estimateSwapV2toV2(
-  inputAmount,
-  firstDex,
-  secondDex,
-  path,
-  inversePath,
-  myProvider
-) {
+async function estimateSwapV2toV2(inputAmount, firstDex, secondDex, path, inversePath, myProvider) {
   try {
     let gasPrice = await myProvider.getGasPrice();
     gasPrice = gasPrice.mul(105);
@@ -180,14 +141,6 @@ async function estimateSwapV2toV2(
   }
 }
 
-async function swapV2toV3(inputAmount, firstDex, secondDex, path) {
-  await swampert.fromV2ToV3(firstDex, secondDex, path, {
-    value: inputAmount,
-  });
-  const amountOut = await swampert.amountOut();
-  console.log("amountOut:", amountOut.toString());
-}
-
 async function estimateSwapV2toV3(inputAmount, firstDex, secondDex, path, myProvider) {
   try {
     let gasPrice = await myProvider.getGasPrice();
@@ -218,6 +171,29 @@ async function estimateSwapV2toV3(inputAmount, firstDex, secondDex, path, myProv
     console.log("something went wrong:", error.reason);
     return false;
   }
+}
+async function swapV3toV2(inputAmount, firstDex, secondDex, inversePath) {
+  await swampert.fromV3ToV2(firstDex, secondDex, inversePath, {
+    value: inputAmount,
+  });
+  const amountOut = await swampert.amountOut();
+  console.log("amountOut:", amountOut.toString());
+}
+
+async function swapV2toV2(inputAmount, firstDex, secondDex, path, inversePath) {
+  await swampert.fromV2ToV2(firstDex, secondDex, path, inversePath, {
+    value: inputAmount,
+  });
+  const amountOut = await swampert.amountOut();
+  console.log("amountOut:", amountOut.toString());
+}
+
+async function swapV2toV3(inputAmount, firstDex, secondDex, path) {
+  await swampert.fromV2ToV3(firstDex, secondDex, path, {
+    value: inputAmount,
+  });
+  const amountOut = await swampert.amountOut();
+  console.log("amountOut:", amountOut.toString());
 }
 
 module.exports = { callZap };
