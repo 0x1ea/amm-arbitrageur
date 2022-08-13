@@ -117,32 +117,32 @@ async function getDiff(config, params, i, type) {
     console.log("ape   amountOut4: N/A");
   }
 
-  try {
-    let amountOut5 = await exchanges.dfyn.getAmountsOut(config.amount, [
-      config.token0,
-      config.token1,
-    ]);
-    let amountOut = ethers.utils.formatUnits(amountOut5[1], decimals);
-    amountOut = parseFloat(amountOut).toFixed(8);
+  // try {
+  //   let amountOut5 = await exchanges.dfyn.getAmountsOut(config.amount, [
+  //     config.token0,
+  //     config.token1,
+  //   ]);
+  //   let amountOut = ethers.utils.formatUnits(amountOut5[1], decimals);
+  //   amountOut = parseFloat(amountOut).toFixed(8);
 
-    if (!minAmount || amountOut < minAmount) {
-      minAmount = amountOut;
-      secondDex = "dfyn";
-    }
+  //   if (!minAmount || amountOut < minAmount) {
+  //     minAmount = amountOut;
+  //     secondDex = "dfyn";
+  //   }
 
-    if (!maxAmount || amountOut > maxAmount) {
-      maxAmount = amountOut;
-      firstDex = "dfyn";
-    }
+  //   if (!maxAmount || amountOut > maxAmount) {
+  //     maxAmount = amountOut;
+  //     firstDex = "dfyn";
+  //   }
 
-    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
-      midAmount = amountOut;
-      thirdDex = "dfyn";
-    }
-    console.log("dfyn  amountOut5:", ethers.utils.formatUnits(amountOut5[1], decimals));
-  } catch (error) {
-    console.log("dfyn  amountOut5: N/A");
-  }
+  //   if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+  //     midAmount = amountOut;
+  //     thirdDex = "dfyn";
+  //   }
+  //   console.log("dfyn  amountOut5:", ethers.utils.formatUnits(amountOut5[1], decimals));
+  // } catch (error) {
+  //   console.log("dfyn  amountOut5: N/A");
+  // }
 
   console.log(
     `FirstDex: ${firstDex} --> (SecondDex: ${secondDex} || ThirdDex: ${thirdDex})`
