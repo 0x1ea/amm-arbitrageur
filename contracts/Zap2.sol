@@ -41,6 +41,7 @@ contract Zap2 {
             block.timestamp
         );
 
+        require(outputAmount[length] > msg.value, "0");
         return outputAmount[length];
     }
 
@@ -78,6 +79,7 @@ contract Zap2 {
             block.timestamp
         );
 
+        require(outputAmount[length] > msg.value, "0");
         return outputAmount[length];
     }
 
@@ -106,6 +108,7 @@ contract Zap2 {
             })
         );
 
+        require(outputAmount > msg.value, "0");
         return outputAmount;
     }
 }

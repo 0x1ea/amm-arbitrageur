@@ -10,7 +10,7 @@ async function getDiff(amount, path, params, i, type) {
   let firstDex, secondDex, thirdDex, minAmount, maxAmount, midAmount;
 
   const { decimals, symbol } = await getTokenData(params.tokenOut, myDeployer);
-  console.log(`\nId: ${i}, Symbol: ${symbol}, Address: ${params.tokenOut}`);
+  console.log(`Id: ${i}, Symbol: ${symbol}, Address: ${params.tokenOut}`);
 
   try {
     let amountOut1 = await exchanges.quick.getAmountsOut(amount, path);
@@ -18,18 +18,17 @@ async function getDiff(amount, path, params, i, type) {
     let amountOut = ethers.utils.formatUnits(amountOut1[amountOut1.length - 1], decimals);
     amountOut = parseFloat(amountOut).toFixed(8);
 
-    console.log(
-      "quick amountOut1:",
-      ethers.utils.formatUnits(amountOut1[amountOut1.length - 1], decimals)
-    );
-
     firstDex = "quick";
     secondDex = "quick";
     thirdDex = "quick";
     minAmount = amountOut;
     maxAmount = amountOut;
+    // console.log(
+    //   "quick amountOut:",
+    //   ethers.utils.formatUnits(amountOut1[amountOut1.length - 1], decimals)
+    // );
   } catch (error) {
-    console.log("quick amountOut1: N/A");
+    // console.log("quick amountOut: N/A");
   }
 
   try {
@@ -51,12 +50,38 @@ async function getDiff(amount, path, params, i, type) {
       midAmount = amountOut;
       thirdDex = "sushi";
     }
-    console.log(
-      "sushi amountOut2:",
-      ethers.utils.formatUnits(amountOut2[amountOut2.length - 1], decimals)
-    );
+    // console.log(
+    //   "sushi amountOut:",
+    //   ethers.utils.formatUnits(amountOut2[amountOut2.length - 1], decimals)
+    // );
   } catch (error) {
-    console.log("sushi amountOut2: N/A");
+    // console.log("sushi amountOut: N/A");
+  }
+  try {
+    let amountOut2 = await exchanges.merkat.getAmountsOut(amount, path);
+    let amountOut = ethers.utils.formatUnits(amountOut2[amountOut2.length - 1], decimals);
+    amountOut = parseFloat(amountOut).toFixed(8);
+
+    if (!minAmount || amountOut < minAmount) {
+      minAmount = amountOut;
+      secondDex = "merkat";
+    }
+
+    if (!maxAmount || amountOut > maxAmount) {
+      maxAmount = amountOut;
+      firstDex = "merkat";
+    }
+
+    if (!midAmount || (amountOut > minAmount && amountOut < maxAmount)) {
+      midAmount = amountOut;
+      thirdDex = "merkat";
+    }
+    // console.log(
+    //   "merkat amountOut:",
+    //   ethers.utils.formatUnits(amountOut2[amountOut2.length - 1], decimals)
+    // );
+  } catch (error) {
+    // console.log("merkat amountOut: N/A");
   }
 
   try {
@@ -84,9 +109,9 @@ async function getDiff(amount, path, params, i, type) {
       midAmount = amountOut;
       thirdDex = "uni";
     }
-    console.log("uni   amountOut3:", ethers.utils.formatUnits(amountOut3, decimals));
+    // console.log("uni   amountOut:", ethers.utils.formatUnits(amountOut3, decimals));
   } catch (error) {
-    console.log("uni   amountOut3: N/A");
+    // console.log("uni   amountOut: N/A");
   }
 
   try {
@@ -108,15 +133,15 @@ async function getDiff(amount, path, params, i, type) {
       midAmount = amountOut;
       thirdDex = "ape";
     }
-    console.log(
-      "ape   amountOut4:",
-      ethers.utils.formatUnits(amountOut4[amountOut4.length - 1], decimals)
-    );
+    // console.log(
+    //   "ape   amountOut:",
+    //   ethers.utils.formatUnits(amountOut4[amountOut4.length - 1], decimals)
+    // );
   } catch (error) {
-    console.log("ape   amountOut4: N/A");
+    // console.log("ape   amountOut4: N/A");
   }
 
-  console.log(`FirstDex: ${firstDex} --> (SecondDex: ${secondDex} || ThirdDex: ${thirdDex})`);
+  // console.log(`FirstDex: ${firstDex} --> (SecondDex: ${secondDex} || ThirdDex: ${thirdDex})`);
 
   return { firstDex, secondDex, thirdDex };
 }
@@ -225,6 +250,14 @@ async function getExchanges(type) {
     deployer[type]
   );
 
+  const merkat = new ethers.Contract(
+    dexes.polygon.merkat.address,
+    dexes.polygon.merkat.abi,
+    deployer[type]
+  );
+
+  const ape = new ethers.Contract(dexes.polygon.ape.address, dexes.polygon.ape.abi, deployer[type]);
+
   const uni = new ethers.Contract(dexes.polygon.uni.address, dexes.polygon.uni.abi, deployer[type]);
 
   const uniQuoter = new ethers.Contract(
@@ -233,9 +266,7 @@ async function getExchanges(type) {
     deployer[type]
   );
 
-  const ape = new ethers.Contract(dexes.polygon.ape.address, dexes.polygon.ape.abi, deployer[type]);
-
-  return { sushi, quick, uni, uniQuoter, ape };
+  return { sushi, quick, uni, uniQuoter, ape, merkat };
 }
 
 module.exports = {

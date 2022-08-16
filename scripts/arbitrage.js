@@ -19,7 +19,7 @@ async function main() {
         [WMATIC, USDC, tokens[i]],
       ];
 
-      const AMOUNT = ONE.mul(12);
+      const AMOUNT = ONE.mul(14);
 
       const params = {
         tokenIn: WMATIC,
